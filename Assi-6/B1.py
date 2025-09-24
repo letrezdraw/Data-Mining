@@ -1,46 +1,14 @@
-# Write a python program to implement k-means algorithm on synthetic dataset and make it as small as possible with using ternary operators and other python medthods to minimize the code with same output.
 import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-import seaborn as sns
-np.random.seed(42)
-num_samples = 1000
-data = {
-    "CUST_ID": [f"C{100000+i}" for i in range(num_samples)],
-    "BALANCE": np.random.uniform(0, 5000, num_samples),
-    "BALANCE_FREQUENCY": np.random.uniform(0, 1, num_samples),
-    "PURCHASES": np.random.uniform(0, 10000, num_samples),
-    "ONEOFF_PURCHASES": np.random.uniform(0, 5000, num_samples),
-    "INSTALLMENTS_PURCHASES": np.random.uniform(0, 5000, num_samples),
-    "CASH_ADVANCE": np.random.uniform(0, 10000, num_samples),
-    "PURCHASES_FREQUENCY": np.random.uniform(0, 1, num_samples),
-    "ONEOFF_PURCHASES_FREQUENCY": np.random.uniform(0, 1, num_samples),
-    "PURCHASES_INSTALLMENTS_FREQUENCY": np.random.uniform(0, 1, num_samples),
-    "CASH_ADVANCE_FREQUENCY": np.random.uniform(0, 1, num_samples),
-    "CASH_ADVANCE_TRX": np.random.randint(0, 20, num_samples),
-    "PURCHASES_TRX": np.random.randint(0, 100, num_samples),
-    "CREDIT_LIMIT": np.random.uniform(1000, 20000, num_samples),
-    "PAYMENTS": np.random.uniform(0, 20000, num_samples),
-    "MINIMUM_PAYMENTS": np.random.uniform(0, 5000, num_samples),
-    "PRC_FULL_PAYMENT": np.random.uniform(0, 1, num_samples),
-    "TENURE": np.random.randint(6, 13, num_samples)
-}
-df = pd.DataFrame(data)
-df.to_csv("CC_GENERAL.csv", index=False)
-df = df.drop("CUST_ID", axis=1).fillna(df.mean(numeric_only=True))
-scaled_data = StandardScaler().fit_transform(df)
-kmeans = KMeans(n_clusters=4, random_state=42).fit(scaled_data)
-reduced_data = PCA(n_components=2).fit_transform(scaled_data)
-plt.figure(figsize=(10, 6))
-sns.scatterplot(x=reduced_data[:, 0], y=reduced_data[:, 1], hue=kmeans.labels_, palette='Set2')
-plt.title("K-Means Clusters (PCA Projection)")
-plt.xlabel("PCA Component 1")
-plt.ylabel("PCA Component 2")
-plt.legend(title='Cluster')
-plt.grid(True)
-plt.show()
-df["Cluster"] = kmeans.labels_
-df.to_csv("CC_CLUSTERED.csv", index=False)
+
+# Generate synthetic data: 100 points, 2D
+np.random.seed(0)
+X = np.vstack((np.random.randn(50,2)+[5,5], np.random.randn(50,2)+[0,0]))
+
+k = 2
+centers = X[np.random.choice(len(X), k, False)]
+for _ in range(10):
+    labels = np.argmin(((X[:,None]-centers)**2).sum(2), axis=1)
+    centers = np.array([X[labels==i].mean(0) if len(X[labels==i]) else centers[i] for i in range(k)])
+
+print("Centers:\n", centers)
+print("Labels:\n", labels)
